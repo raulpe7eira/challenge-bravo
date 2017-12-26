@@ -8,8 +8,8 @@ class OxrClient {
             url: 'https://openexchangerates.org',
             version: '~1.0'
         });
-        this.latest = callback => this._client.get(`/api/latest.json?app_id=${APP_ID}`, callback);
-        this.currencies = callback => this._client.get(`/api/currencies.json`, callback);
+        this.latest = callback => this._client.get(`/api/latest.json?app_id=${APP_ID}&show_alternative=true`, callback);
+        this.currencies = callback => this._client.get(`/api/currencies.json?show_alternative=true`, callback);
     }
 }
 

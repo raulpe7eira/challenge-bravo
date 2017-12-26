@@ -1,6 +1,6 @@
-const { body, query, validationResult } = require('express-validator/check');
+const { query, validationResult } = require('express-validator/check');
+const currencyPredicate = require('../predicates/currency');
 const logger = require('../services/logger');
-const assert = require('assert');
 const accounting = require('accounting');
 
 const getRate = (base, rates, from, to) => {
@@ -13,20 +13,27 @@ const getRate = (base, rates, from, to) => {
 };
 
 const formatMoney = value => {
-    return accounting.formatNumber(value, 2, ".", ",");
+    return accounting.formatNumber(value, 6, ".", ",");
 };
 
 module.exports = app => {
 
     app.get('/convert', [
-        query('from', 'Valor da moeda origem é obrigatório e deve ter 3 caracteres.').isLength({ min: 3, max: 3 }),
-        query('to', 'Valor da moeda final é obrigatório e deve ter 3 caracteres.').isLength({ min: 3, max: 3 }),
+        query('from', `Valor da moeda origem é obrigatório e ${currencyPredicate.message}.`).matches(currencyPredicate.regex),
+        query('to', `Valor da moeda final é obrigatório e ${currencyPredicate.message}.`).matches(currencyPredicate.regex),
         query('amount', 'Valor a ser convertido é obrigatório e deve ser um decimal.').isLength({ min: 1 }).isFloat()
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             logger.info(`Encontrado erros de validação: ${errors}`);
-            return res.status(422).json({ errors: errors.mapped() });
+            return res.format({
+                html: function () {
+                    res.render('error', { errors: errors.mapped() });
+                },
+                json: function() {
+                    res.status(422).json({ errors: errors.mapped() });
+                }
+            });
         }
 
         const from = req.query.from.toUpperCase();
@@ -37,7 +44,14 @@ module.exports = app => {
         oxrClient.latest((errors, request, response, object) => {
             if (errors) {
                 logger.info(`Encontrado erros ao buscar as taxas: ${errors}`);
-                return res.status(422).json({ errors: errors });
+                return res.format({
+                    html: function () {
+                        res.render('error', { errors: errors });
+                    },
+                    json: function() {
+                        res.status(422).json({ errors: errors });
+                    }
+                });
             }
 
             const rate = getRate(object.base, object.rates, from, to);
@@ -49,7 +63,7 @@ module.exports = app => {
                         amount: amount,
                         from: from,
                         to: to,
-                        currencies: Object.keys(object.rates),
+                        currencies: Object.keys(object.rates).filter(key => currencyPredicate.regex.test(key)),
                         convertion: `Taxa: ${formatMoney(rate)} / Conversão: ${formatMoney(result)}`
                     });
                 },
@@ -63,10 +77,10 @@ module.exports = app => {
                         },
                         meta: {
                             timestamp: object.timestamp,
-                            rate: formatMoney(rate)
+                            rate: rate
                         },
-                        response: formatMoney(result)
-                    })
+                        response: result
+                    });
                 }
             });
         });

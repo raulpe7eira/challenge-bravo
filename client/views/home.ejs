@@ -18,13 +18,22 @@
 <body>
     <div class="container">
         <div class="jumbotron">
-            <h1 class="display-3 font-weight-bold text-center">Currency <i class="material-icons" style="font-size:65px;border-radius:100px;border:10px solid black">&#xE227;</i> Converter</h1>
+            <h1 class="display-5 font-weight-bold text-center">
+                Currency 
+                <span style="position:relative;top:9px;display:inline;"><i class="material-icons" style="font-size:48px;">&#xE84F;</i></span>
+                Converter
+            </h1>
+
             <hr class="my-4">
 
             <div class="alert alert-success text-center" role="alert">
-                <h4 class="alert-heading">Seja Bem-Vindo!</h4>
-                <p>Vamos fazer a conversão entre diversas moedas suportadas pelo site
-                    <a href="https://openexchangerates.org/">https://openexchangerates.org/</a>?</p>
+                <h4 class="alert-heading"><%= typeof convertion.length != 'undefined' ? 'Convertido!' : 'Seja Bem-Vindo!' %></h4>
+                <% if (typeof convertion.length != 'undefined') { %>
+                    <p><%= convertion %></p>
+                <% } else { %>
+                    <p>Vamos fazer a conversão entre moedas utilizando as taxas informadas pelo
+                        <a href="https://openexchangerates.org/">https://openexchangerates.org/</a>?</p>
+                <% } %>
             </div>
 
             <form action="/convert" method='GET' enctype="text/html">
@@ -38,8 +47,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <label for="from">Moeda Origem</label>
@@ -53,6 +60,8 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <label for="to">Moeda Destino</label>
@@ -69,15 +78,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Converter</button>
             </form>
-
-            <hr class="my-4">
-
-            <div class="alert alert-warning text-center" role="alert">
-                <% if (typeof convertion.length != 'undefined') { %>
-                    <h4 class="alert-heading">Convertido!</h4>
-                <% } %>
-                <%= typeof convertion.length != 'undefined' ? convertion : 'Vamos realizar uma conversão?' %>
-            </div>
         </div>
     </div>
 

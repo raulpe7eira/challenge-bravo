@@ -1,4 +1,5 @@
 const logger = require('../services/logger');
+const currencyPredicate = require('../predicates/currency');
 
 module.exports = app => {
     app.get('/', (req, res, next) => {
@@ -8,7 +9,8 @@ module.exports = app => {
                 logger.info(`Encontrado erros ao buscar as moedas: ${errors}`);
                 return res.status(422).json({ errors: errors });
             }
-            res.render('home', { amount: {}, from: {}, to: {}, currencies: Object.keys(object), convertion: {} });
+            const currencies = Object.keys(object).filter(key => currencyPredicate.regex.test(key));
+            res.render('home', { amount: {}, from: {}, to: {}, currencies: currencies, convertion: {} });
         });
     });
 }

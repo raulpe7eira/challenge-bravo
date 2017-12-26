@@ -17,8 +17,14 @@ module.exports = () => {
 
     consign()
         .include('server/controllers')
+        .then('server/predicates')
         .then('server/services')
         .into(app);
+
+    app.use(function (req, res, next) {
+        res.status(422).render('error');
+        next();
+    });
 
     return app;
 };
