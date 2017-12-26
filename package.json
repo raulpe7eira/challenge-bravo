@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha \"test/**/*.spec.js\"",
-    "start": "node index"
+    "start": "node cluster"
   },
   "author": "Raul Pereira <raul.pereira@gmail.com>",
   "license": "ISC",
