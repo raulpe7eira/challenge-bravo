@@ -2,7 +2,7 @@ const logger = require('../services/logger');
 const currencyPredicate = require('../predicates/currency');
 
 module.exports = app => {
-    app.get('/', (req, res, next) => {
+    app.get('/', (req, res) => {
         const oxrClient = new app.server.services.OxrClient();
         oxrClient.currencies((errors, request, response, object) => {
             if (errors) {

@@ -28,9 +28,11 @@
 
             <div class="alert alert-danger text-center" role="alert">
                 <h4 class="alert-heading">Ops!</h4>
-                <p><%= errors.amount ? errors.amount.msg : '' %></p>
-                <p><%= errors.from ? errors.from.msg : '' %></p>
-                <p><%= errors.to ? errors.to.msg : '' %></p>
+                <% if (errors) { %>
+                    <p><%= errors.amount ? errors.amount.msg : '' %></p>
+                    <p><%= errors.from ? errors.from.msg : '' %></p>
+                    <p><%= errors.to ? errors.to.msg : '' %></p>
+                <% } %>
             </div>
         </div>
     </div>
